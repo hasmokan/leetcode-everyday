@@ -5,39 +5,46 @@
  */
 
 // @lc code=start
+struct Solution;
+
 impl Solution {
     pub fn search(nums: Vec<i32>, target: i32) -> bool {
         let mut left = 0;
-        let mut right = nums.len();
+        let mut right = nums.len() - 1;  // 使用闭区间，避免越界
 
-        while left < right {
+        while left <= right {
             let mid = left + (right - left) / 2;
-
-            println!("{} {} {}", left, right, mid);
 
             if nums[mid] == target {
                 return true;
             }
-            if nums[left] == nums[mid] {
+
+            // 处理重复元素
+            if nums[left] == nums[mid] && nums[mid] == nums[right] {
                 left += 1;
+                if right > 0 {
+                    right -= 1;
+                }
                 continue;
             }
-            else if nums[mid] > nums[left] {
+
+            // 判断左半部分是否有序
+            if nums[mid] >= nums[left] {
+                // 左半部分有序
                 if target >= nums[left] && target < nums[mid] {
-                    right = mid;
+                    right = mid - 1;
                 } else {
                     left = mid + 1;
                 }
-            }
-            else {
-                if target > nums[mid] && target <= nums[right - 1] {
+            } else {
+                // 右半部分有序
+                if target > nums[mid] && target <= nums[right] {
                     left = mid + 1;
                 } else {
-                    right = mid;
+                    right = mid - 1;
                 }
             }
         }
-
 
         false
     }
